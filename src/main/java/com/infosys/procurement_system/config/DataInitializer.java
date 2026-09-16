@@ -44,8 +44,12 @@ public class DataInitializer implements CommandLineRunner {
         if (!userRepository.existsByRole(Role.ADMIN)) {
             log.info("No ADMIN found in the system. Bootstrapping initial admin...");
             
-            String adminEmail = env.getProperty("APP_ADMIN_EMAIL", "admin@example.com");
-            String adminPassword = env.getProperty("APP_ADMIN_PASSWORD", "Admin@123");
+            String adminEmail = env.getProperty("APP_ADMIN_EMAIL");
+            String adminPassword = env.getProperty("APP_ADMIN_PASSWORD");
+            
+            if (adminEmail == null || adminEmail.isBlank() || adminPassword == null || adminPassword.isBlank()) {
+                throw new IllegalStateException("Cannot bootstrap admin: APP_ADMIN_EMAIL or APP_ADMIN_PASSWORD environment variables are missing.");
+            }
             
             User admin = User.builder()
                     .employeeId("ADMIN-001")

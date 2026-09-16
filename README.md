@@ -1,18 +1,26 @@
 # Enterprise Procurement System
 
-## 1. Project Introduction
+## Project Introduction
 
 The Enterprise Procurement System is a centralized, role-based web application designed to streamline the request-to-delivery lifecycle of organizational purchases. 
 
 It solves the inefficiencies, lack of transparency, and manual bottlenecks associated with traditional procurement methods (e.g., disjointed email chains, lost requests, and untracked budgets). The system brings Employees, Administrators, and Suppliers onto a single, unified platform where every purchase request is digitally tracked, approved, and fulfilled.
 
-## 2. Vision / Objective
+## Vision / Objective
 
 The primary goal of this project is to automate the procurement workflow to save time, enforce budget compliance, and provide real-time visibility into order fulfillment. The system is intended to eliminate manual paperwork and centralize communication between internal teams and external suppliers, ensuring a transparent and auditable purchasing process.
 
-## 3. How the System Works
+## Key Features
 
-The application operates on a strict Role-Based Access Control (RBAC) model with three primary roles: Employee, Admin, and Supplier.
+- **Role-Based Access Control (RBAC):** Distinct portals and capabilities for Employees, Admins, and Suppliers.
+- **Automated Workflow:** End-to-end tracking from request submission to final delivery.
+- **Budget Tracking & Analytics:** Interactive dashboards providing real-time spending insights.
+- **Supplier Integration:** Suppliers can directly update delivery statuses.
+- **Notifications:** In-app alerts to keep users informed about order updates.
+
+## How the System Works
+
+The application operates on a strict Role-Based Access model:
 
 1. **Request Phase**: An **Employee** browses available products and submits a purchase request (issue), providing necessary justifications and quantity details.
 2. **Approval Phase**: An **Admin** reviews the request via their dashboard. They assess the justification and budget, and then approve or reject the request.
@@ -20,9 +28,11 @@ The application operates on a strict Role-Based Access Control (RBAC) model with
 4. **Fulfillment Phase**: The **Supplier** logs in to view incoming orders. They prepare the items, update logistics statuses (e.g., "In Transit"), and eventually mark the order as "Delivered".
 5. **Feedback Phase**: The **Employee** confirms receipt and provides a rating/feedback on the delivery experience, completing the lifecycle.
 
-## 4. System Architecture
+## System Architecture
 
 The project follows a modern decoupled Client-Server architecture. The React-based frontend communicates with the Spring Boot backend via RESTful APIs, utilizing JWT for stateless authentication.
+
+## System Flow Diagram
 
 ```mermaid
 graph TD
@@ -56,45 +66,48 @@ graph TD
     end
 ```
 
-- **Frontend**: A Single Page Application (SPA) built with React 19. It handles routing, UI state, and API requests.
-- **Backend**: A Java 21 Spring Boot application structuring business logic in a standard N-Tier architecture (Controller -> Service -> Repository).
-- **Database**: Relational data management handled by MySQL, interacted with via Hibernate/JPA.
+## Internal / Business Rules
 
-## 5. API Overview
+- Only **Admins** can approve requests and process payments.
+- **Suppliers** can only view and update the status of Purchase Orders specifically assigned to them.
+- Employees can only see their own requests and leave feedback once an item is marked "Delivered".
+- Passwords are encrypted before storage and authentication tokens (JWT) must be passed with all protected requests.
+
+## API Overview
 
 The frontend communicates with the backend via stateless, JSON-based REST APIs. Authentication is secured via Bearer tokens (JWT) passed in the `Authorization` header.
 
 Major API groups include:
 - **`/api/auth/*`**: Handles user authentication, registration (employees, admins, suppliers), and JWT generation/validation.
-- **`/api/users/*`, `/api/admin/*`, `/api/supplier/*`**: Aggregates metrics and analytics data for role-specific dashboards (e.g., spending analytics, request summaries).
+- **`/api/users/*`, `/api/admin/*`, `/api/supplier/*`**: Aggregates metrics and analytics data for role-specific dashboards.
 - **`/api/issues/*`**: Manages the core purchase requests (creating, fetching by role, updating approval statuses).
 - **`/api/products/*` & `/api/categories/*`**: Manages the catalog of items available for procurement.
 - **`/api/departments/*`**: Handles organizational structure and department admin assignments.
-- **`/api/admin/purchase-orders/*`**: Handles PO generation and payment processing for approved requests.
-- **`/api/supplier/orders/*`**: Allows suppliers to view their specific orders and update fulfillment/delivery statuses.
+- **`/api/admin/purchase-orders/*`**: Handles PO generation and payment processing.
+- **`/api/supplier/orders/*`**: Allows suppliers to view their specific orders and update fulfillment statuses.
 - **`/api/notifications/*`**: Manages in-app user notifications.
 
-## 6. Technology Stack
+## Technology Stack
 
 ### Frontend
-- **React (v19)**: Core UI library for building component-based interfaces.
-- **Vite**: Next-generation frontend tooling for extremely fast development builds.
-- **Tailwind CSS (v4)**: Utility-first CSS framework for rapid styling without custom stylesheets.
+- **React (v19)**: Core UI library.
+- **Vite**: Frontend tooling for fast development builds.
+- **Tailwind CSS (v4)**: Utility-first CSS framework.
 - **React Router DOM**: Client-side routing.
-- **Recharts**: For rendering interactive charts on dashboards.
+- **Recharts**: For rendering interactive charts.
 - **Lucide React**: Iconography.
 
 ### Backend
 - **Java 21**: Core programming language.
-- **Spring Boot (v3.x)**: Application framework for building production-ready REST APIs.
-- **Spring Security & JWT**: Manages authentication and Role-Based Access Control.
+- **Spring Boot (v3.x)**: Application framework for REST APIs.
+- **Spring Security & JWT**: Authentication and Access Control.
 - **Spring Data JPA / Hibernate**: ORM for database interactions.
-- **Maven**: Dependency management and build tool.
+- **Maven**: Build tool.
 
 ### Database
-- **MySQL**: Primary relational database for production data.
+- **MySQL**: Relational database for production data.
 
-## 7. Project/File Organization
+## Project Structure
 
 ```text
 procurement-system/
@@ -125,13 +138,12 @@ procurement-system/
         └── index.css       # Global styles (Tailwind imports)
 ```
 
-## 8. Local Setup
+## Local Setup
 
 ### Prerequisites
 - **Java Development Kit (JDK) 21**
 - **Node.js** (v18 or higher) & **npm**
 - **MySQL Server** (Running locally or via Docker)
-- **Maven** (Optional, project includes Maven Wrapper)
 
 ### Step 1: Database Setup
 1. Start your MySQL instance.
@@ -142,7 +154,7 @@ procurement-system/
 
 ### Step 2: Backend Setup
 1. Navigate to the root directory of the project.
-2. Configure your environment variables for local database credentials in your system or IDE. Alternatively, `spring-dotenv` enables `.env` file usage based on the root `.env` template.
+2. Ensure you have configured your environment variables (see below).
 3. Run the backend using the Maven wrapper:
    ```bash
    # Windows
@@ -151,7 +163,7 @@ procurement-system/
    # Mac/Linux
    ./mvnw spring-boot:run
    ```
-4. The backend will start on `http://localhost:8080`. (Spring Boot JPA will automatically create the necessary tables).
+4. The backend will start on `http://localhost:8080`.
 
 ### Step 3: Frontend Setup
 1. Navigate to the `frontend` directory:
@@ -162,34 +174,43 @@ procurement-system/
    ```bash
    npm install
    ```
-3. If necessary, create a `.env` file in the `frontend` folder to set the API base URL (defaults to `/api` proxy or direct URL).
-   ```env
-   VITE_API_BASE_URL=http://localhost:8080/api
-   ```
-4. Start the Vite development server:
+3. Start the Vite development server:
    ```bash
    npm run dev
    ```
-5. The application will be accessible at `http://localhost:5173`.
+4. The application will be accessible at `http://localhost:5173`.
 
-## 9. Configuration / Environment Variables
+## Environment Variables
 
-The backend relies on several environment variables configured in `src/main/resources/application.yaml`.
+The backend relies on several environment variables configured in `src/main/resources/application.yaml`. You should provide these variables via your local environment or a `.env` file at the root of the project. 
 
-**Backend Variables:**
+> **Important**: Never commit actual passwords, API keys, or JWT secrets to version control. The `.env` file is excluded via `.gitignore`.
+
+**Required Backend Variables:**
 - `USER_NAME_DB`: MySQL Database username (Default: `root`)
 - `PASSWORD_DB`: MySQL Database password
 - `JWT_SECRET`: A secure Base64 encoded secret string for signing JWTs.
 - `JWT_EXPIRATION`: Token expiration time in milliseconds (Default: `86400000` / 24 hours).
 - `SPRING_MAIL_USERNAME`: SMTP email address for sending notifications.
 - `SPRING_MAIL_PASSWORD`: SMTP app password.
+- `APP_ADMIN_EMAIL`: The email address for the initial bootstrapped admin.
+- `APP_ADMIN_PASSWORD`: The password for the initial bootstrapped admin.
 
-> **Important**: Never commit actual passwords, API keys, or JWT secrets to version control.
+## Initial Admin Setup
 
-## 10. Usage
+During application startup, the system creates an initial ADMIN account if no ADMIN user exists. The admin credentials must be provided through environment variables. 
+
+To configure this locally, set the following environment variables (e.g. in your `.env` file):
+```env
+APP_ADMIN_EMAIL=admin@example.com
+APP_ADMIN_PASSWORD=<your-secure-password>
+```
+If these variables are missing, the application will fail to start and throw an error to prevent silent creation of unsecure accounts. The developer must configure their own values locally.
+
+## Usage
 
 Once the application is running:
 1. **Initial Registration**: Navigate to the registration page. Register an initial User account. 
 2. **Employees**: Log in, browse the product catalog, and click "Raise Request" to initiate a purchase.
-3. **Admins**: Log in, navigate to the Dashboard to see pending requests, click to approve, and proceed to the Payment section to generate POs.
+3. **Admins**: Log in (using the initial setup credentials), navigate to the Dashboard to see pending requests, click to approve, and proceed to the Payment section to generate POs.
 4. **Suppliers**: Register/Login as a supplier, view assigned Purchase Orders, and update the status from "Pending" to "Delivered".
