@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Approved</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .badge-approved { display: inline-block; background-color: #d1fae5; color: #065f46; font-weight: 700; padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; }
+        .table-details { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table-details th, .table-details td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eef2f5; }
+        .table-details th { background-color: #f8fafc; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
+        .table-details td { color: #1e293b; font-size: 14px; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Procurement Request Approved</h1>
+            <p th:text="'Request #' + ${dto.requestId}">Request #PR-101</p>
+        </div>
+        <div class="content">
+            <div class="badge-approved">APPROVED</div>
+            <h2>Congratulations, <span th:text="${dto.employeeName}">Employee</span>!</h2>
+            <p>Your procurement request/application has been reviewed and officially <strong>APPROVED</strong>.</p>
+
+            <table class="table-details">
+                <tr>
+                    <th>Request ID</th>
+                    <td th:text="${dto.requestId}">PR-101</td>
+                </tr>
+                <tr th:if="${dto.productName != null}">
+                    <th>Requested Item</th>
+                    <td th:text="${dto.productName}">Product Name</td>
+                </tr>
+                <tr>
+                    <th>Previous Status</th>
+                    <td th:text="${dto.previousStatus}">PENDING</td>
+                </tr>
+                <tr>
+                    <th>Current Status</th>
+                    <td style="color: #059669; font-weight: 600;" th:text="${dto.currentStatus}">APPROVED</td>
+                </tr>
+                <tr>
+                    <th>Updated Time</th>
+                    <td th:text="${#temporals.format(dto.updatedTime, 'dd-MMM-yyyy HH:mm')}">06-Aug-2026 18:00</td>
+                </tr>
+                <tr th:if="${dto.adminRemarks != null and !dto.adminRemarks.isBlank()}">
+                    <th>Admin Remarks</th>
+                    <td th:text="${dto.adminRemarks}">Approved by procurement board.</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 25px;">The order fulfillment team will proceed with processing your request.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> <span th:text="${companyName}">Enterprise Procurement System</span>. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

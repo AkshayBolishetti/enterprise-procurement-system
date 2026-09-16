@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procurement Request Created</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .badge-pending { display: inline-block; background-color: #dbeafe; color: #1e40af; font-weight: 700; padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; }
+        .table-details { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table-details th, .table-details td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eef2f5; }
+        .table-details th { background-color: #f8fafc; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
+        .table-details td { color: #1e293b; font-size: 14px; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Procurement Request Created</h1>
+            <p th:text="'Request #' + ${dto.requestId}">Request #PRD-001</p>
+        </div>
+        <div class="content">
+            <div class="badge-pending">SUBMITTED FOR APPROVAL</div>
+            <h2>Hello, <span th:text="${dto.employeeName}">Employee</span>!</h2>
+            <p>Your procurement request has been successfully created and submitted to administration for review.</p>
+
+            <table class="table-details">
+                <tr>
+                    <th>Request Code</th>
+                    <td th:text="${dto.requestId}">PRD-001</td>
+                </tr>
+                <tr th:if="${dto.productName != null}">
+                    <th>Product Name</th>
+                    <td th:text="${dto.productName}">Product Name</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td style="color: #2563eb; font-weight: 600;" th:text="${dto.currentStatus}">PENDING</td>
+                </tr>
+                <tr>
+                    <th>Created Time</th>
+                    <td th:text="${#temporals.format(dto.updatedTime, 'dd-MMM-yyyy HH:mm')}">18-Aug-2026 19:30</td>
+                </tr>
+                <tr th:if="${dto.adminRemarks != null}">
+                    <th>Details</th>
+                    <td th:text="${dto.adminRemarks}">Submitted for approval</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 25px;">You will be notified as soon as an Administrator approves or reviews your request.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> Enterprise Procurement System. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

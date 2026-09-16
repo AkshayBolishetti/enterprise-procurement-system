@@ -1,0 +1,189 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    /* Base Colors - Light Mode */
+    --background: #F7F8FC;
+    --foreground: #111111;
+    
+    /* Cards and Surfaces */
+    --card: #FFFFFF;
+    --card-foreground: #111111;
+    --surface: #FFFFFF;
+    
+    /* Borders */
+    --border: #F1F5F9;
+    --input: #E2E8F0;
+    
+    /* Primary Brand - Purple */
+    --primary: #5B2EEA;
+    --primary-hover: #4B24C5;
+    --primary-foreground: #FFFFFF;
+    
+    /* Secondary / Muted */
+    --secondary: #F8FAFC;
+    --secondary-hover: #F1F5F9;
+    --secondary-foreground: #64748B;
+    
+    --muted: #94A3B8;
+    --muted-background: #F8FAFC;
+    
+    /* Semantic Colors */
+    --error: #EF4444;
+    --error-bg: #FEF2F2;
+    --error-border: #FCA5A5;
+    --error-foreground: #B91C1C;
+
+    --success: #10B981;
+    --success-bg: #ECFDF5;
+    --success-border: #A7F3D0;
+    --success-foreground: #047857;
+    
+    --warning: #F59E0B;
+    --warning-bg: #FFFBEB;
+    --warning-border: #FDE68A;
+    --warning-foreground: #B45309;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Base Colors - Dark Mode (True Black) */
+    --background: #000000;
+    --foreground: #FFFFFF;
+    
+    /* Cards and Surfaces - extremely subtle */
+    --card: #0A0A0A;
+    --card-foreground: #F8FAFC;
+    --surface: #050505;
+    
+    /* Borders */
+    --border: #1A1A1A;
+    --input: #262626;
+    
+    /* Primary Brand - Purple */
+    --primary: #5B2EEA;
+    --primary-hover: #6D44F0;
+    --primary-foreground: #FFFFFF;
+    
+    /* Secondary / Muted */
+    --secondary: #111111;
+    --secondary-hover: #1A1A1A;
+    --secondary-foreground: #CBD5E1;
+    
+    --muted: #64748B;
+    --muted-background: #000000;
+
+    /* Semantic Colors */
+    --error: #F87171;
+    --error-bg: #450A0A;
+    --error-border: #7F1D1D;
+    --error-foreground: #FCA5A5;
+
+    --success: #34D399;
+    --success-bg: #064E3B;
+    --success-border: #065F46;
+    --success-foreground: #6EE7B7;
+
+    --warning: #FBBF24;
+    --warning-bg: #451A03;
+    --warning-border: #78350F;
+    --warning-foreground: #FCD34D;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Form Inputs */
+  .form-input {
+    @apply flex h-9 w-full rounded-md border border-[var(--input)] bg-[var(--card)] px-3 py-1.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)] disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-colors;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-[var(--secondary-foreground)] mb-1;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--muted)] disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-1.5;
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-1.5 bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)] shadow-sm;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--muted)] disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-1.5 bg-[var(--card)] text-[var(--foreground)] border border-[var(--input)] hover:bg-[var(--secondary)] shadow-sm;
+  }
+  
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--muted)] disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-1.5 hover:bg-[var(--secondary)] text-[var(--secondary-foreground)];
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)] shadow-sm hover:shadow transition-shadow duration-300 dark:shadow-none;
+  }
+  
+  .card-interactive {
+    @apply hover:-translate-y-0.5 cursor-pointer transition-transform duration-300;
+  }
+  
+  .list-row {
+    @apply flex items-center justify-between border-b border-[var(--border)] py-2 transition-colors hover:bg-[var(--secondary)];
+  }
+
+  .list-header {
+    @apply flex items-center justify-between border-b border-[var(--border)] py-1.5 text-xs font-medium text-[var(--muted)];
+  }
+
+  .card-header {
+    @apply flex flex-col space-y-1 p-3;
+  }
+  
+  .card-title {
+    @apply text-base font-semibold leading-none tracking-tight text-[var(--foreground)];
+  }
+  
+  .card-content {
+    @apply p-3 pt-0;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--muted)];
+  }
+  
+  .badge-success {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors bg-[var(--success-bg)] text-[var(--success-foreground)] border border-[var(--success-border)];
+  }
+  
+  .badge-warning {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors bg-[var(--warning-bg)] text-[var(--warning-foreground)] border border-[var(--warning-border)];
+  }
+  
+  .badge-error {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors bg-[var(--error-bg)] text-[var(--error-foreground)] border border-[var(--error-border)];
+  }
+  
+  .badge-neutral {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--input)];
+  }
+  
+  .badge-primary {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors bg-[var(--primary)] text-[var(--primary-foreground)] border border-transparent;
+  }
+}

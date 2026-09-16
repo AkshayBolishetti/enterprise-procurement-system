@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Paid Purchase Order Available</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .badge-supplier { display: inline-block; background-color: #e0e7ff; color: #3730a3; font-weight: 700; padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; }
+        .table-details { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table-details th, .table-details td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eef2f5; }
+        .table-details th { background-color: #f8fafc; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
+        .table-details td { color: #1e293b; font-size: 14px; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Paid Purchase Order Available</h1>
+            <p th:text="'PO #' + ${dto.poNumber}">PO #PO-10001</p>
+        </div>
+        <div class="content">
+            <div class="badge-supplier">READY FOR FULFILLMENT</div>
+            <h2>Greetings, <span th:text="${dto.recipientName}">Supplier Partner</span>!</h2>
+            <p>A new paid Purchase Order has been issued to your account and is ready for fulfillment.</p>
+
+            <table class="table-details">
+                <tr>
+                    <th>PO Number</th>
+                    <td th:text="${dto.poNumber}">PO-10001</td>
+                </tr>
+                <tr th:if="${dto.purchaseOrderId != null}">
+                    <th>Purchase Order ID</th>
+                    <td th:text="${dto.purchaseOrderId}">10</td>
+                </tr>
+                <tr th:if="${dto.productName != null}">
+                    <th>Product</th>
+                    <td th:text="${dto.productName}">Product Name</td>
+                </tr>
+                <tr th:if="${dto.quantity != null}">
+                    <th>Quantity</th>
+                    <td th:text="${dto.quantity}">1</td>
+                </tr>
+                <tr th:if="${dto.totalAmount != null}">
+                    <th>Order Total</th>
+                    <td th:text="'$' + ${#numbers.formatDecimal(dto.totalAmount, 1, 2)}">$1000.00</td>
+                </tr>
+                <tr>
+                    <th>Payment Status</th>
+                    <td style="color: #059669; font-weight: 600;">PAID</td>
+                </tr>
+                <tr th:if="${dto.deliveryAddress != null}">
+                    <th>Delivery Destination</th>
+                    <td th:text="${dto.deliveryAddress}">Corporate Logistics Hub</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 25px;">Please update the shipment progress as order dispatch commences.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> Enterprise Procurement System. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

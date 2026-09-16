@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: procurement-system
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/Procurement_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${USER_NAME_DB:root}
+    password: ${PASSWORD_DB:Akshay@2007}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jwt:
+    secret: ${JWT_SECRET:d8WObco56SqOAhuZLwuFZ1n/7xO/EtDL0Z6d7+T6d3Y=}
+    expiration: ${JWT_EXPIRATION:86400000}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:akshaybolishetti2@gmail.com}
+    password: ${SPRING_MAIL_PASSWORD:hfle fvaa pxii mogs}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE:true}
+    default-encoding: UTF-8
+
+app:
+  email:
+    from: ${APP_EMAIL_FROM:akshaybolishetti2@gmail.com}
+    company-name: ${APP_COMPANY_NAME:Enterprise Procurement System}
+    admin-email: ${APP_ADMIN_EMAIL:akshaybolishetti2@gmail.com}

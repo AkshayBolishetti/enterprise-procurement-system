@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Admin Notification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 8px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .table-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .table-details th,
+        .table-details td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eef2f5;
+        }
+
+        .table-details th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 35%;
+        }
+
+        .table-details td {
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .footer {
+            background-color: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Global Admin Portal</h1>
+            <p>System Activity Notification</p>
+        </div>
+        <div class="content">
+            <div class="admin-badge" th:text="${dto.notificationType}">SYSTEM NOTIFICATION</div>
+
+            <!-- New Issue Raised Section -->
+            <div th:if="${dto.notificationType == 'ISSUE'}">
+                <h2>New Request Raised by Employee</h2>
+                <p>An employee has submitted a new support request ticket requiring attention.</p>
+                <table class="table-details">
+                    <tr>
+                        <th>Employee Name</th>
+                        <td th:text="${dto.employeeName}">John Doe</td>
+                    </tr>
+                    <tr>
+                        <th>Employee Email</th>
+                        <td th:text="${dto.employeeEmail}">john@example.com</td>
+                    </tr>
+                    <tr>
+                        <th>Employee ID</th>
+                        <td th:text="${dto.employeeId}">EMP001</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td th:text="${dto.department}">Operations</td>
+                    </tr>
+                    <tr>
+                        <th>Request ID</th>
+                        <td th:text="${dto.issueId}">REQ-1001</td>
+                    </tr>
+                    <tr>
+                        <th>Subject</th>
+                        <td th:text="${dto.subject}">Hardware request</td>
+                    </tr>
+                    <tr>
+                        <th>Priority</th>
+                        <td th:text="${dto.priority}">HIGH</td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td th:text="${dto.category}">Technical Support</td>
+                    </tr>
+                    <tr>
+                        <th>Created Time</th>
+                        <td th:text="${#temporals.format(dto.createdTime, 'dd-MMM-yyyy HH:mm')}">06-Aug-2026 18:00</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- New Procurement Request Section -->
+            <div th:if="${dto.notificationType == 'PROCUREMENT'}">
+                <h2>New Procurement Request Submitted</h2>
+                <p>A new procurement request has been submitted and is awaiting administration processing.</p>
+                <table class="table-details">
+                    <tr>
+                        <th>Request ID</th>
+                        <td th:text="${dto.requestId}">PR-1001</td>
+                    </tr>
+                    <tr>
+                        <th>Employee Name</th>
+                        <td th:text="${dto.employeeName}">John Doe</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td th:text="${dto.department}">Logistics</td>
+                    </tr>
+                    <tr>
+                        <th>Requested Product</th>
+                        <td th:text="${dto.requestedProduct}">Dell Latitude Laptop</td>
+                    </tr>
+                    <tr>
+                        <th>Quantity</th>
+                        <td th:text="${dto.quantity}">5</td>
+                    </tr>
+                    <tr>
+                        <th>Budget ($)</th>
+                        <td th:text="${dto.budget}">6000.00</td>
+                    </tr>
+                    <tr>
+                        <th>Created Time</th>
+                        <td th:text="${#temporals.format(dto.createdTime, 'dd-MMM-yyyy HH:mm')}">06-Aug-2026 18:00</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- New Employee Account Created Section -->
+            <div th:if="${dto.notificationType == 'EMPLOYEE_ACCOUNT'}">
+                <h2>New Employee Account Created</h2>
+                <p>A new user account has been registered in the system.</p>
+                <table class="table-details">
+                    <tr>
+                        <th>Employee Name</th>
+                        <td th:text="${dto.employeeName}">Jane Smith</td>
+                    </tr>
+                    <tr>
+                        <th>Employee ID</th>
+                        <td th:text="${dto.employeeId}">EMP002</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td th:text="${dto.employeeEmail}">jane@example.com</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td th:text="${dto.department}">Finance</td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td th:text="${dto.role}">EMPLOYEE</td>
+                    </tr>
+                    <tr>
+                        <th>Registered Time</th>
+                        <td th:text="${#temporals.format(dto.createdTime, 'dd-MMM-yyyy HH:mm')}">06-Aug-2026 18:00</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p style="margin-top: 25px;">Please log in to the admin dashboard to review and manage these records.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> <span
+                th:text="${companyName}">Enterprise Procurement System</span>. All rights reserved.
+        </div>
+    </div>
+</body>
+
+</html>

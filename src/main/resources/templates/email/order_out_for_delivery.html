@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Order Is Out for Delivery</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .badge-out { display: inline-block; background-color: #fef3c7; color: #b45309; font-weight: 700; padding: 6px 18px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; }
+        .table-details { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .table-details th, .table-details td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eef2f5; }
+        .table-details th { background-color: #f8fafc; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
+        .table-details td { color: #1e293b; font-size: 14px; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Order Is Out for Delivery</h1>
+            <p th:text="'PO #' + ${dto.poNumber != null ? dto.poNumber : dto.purchaseOrderId}">PO #PO-10001</p>
+        </div>
+        <div class="content">
+            <div class="badge-out">OUT FOR DELIVERY</div>
+            <h2>Hello, <span th:text="${dto.recipientName}">Customer</span>!</h2>
+            <p>Your procurement order has been loaded on the delivery vehicle and is expected to arrive today.</p>
+
+            <table class="table-details">
+                <tr>
+                    <th>PO Number</th>
+                    <td th:text="${dto.poNumber != null ? dto.poNumber : dto.purchaseOrderId}">PO-10001</td>
+                </tr>
+                <tr th:if="${dto.productName != null}">
+                    <th>Product</th>
+                    <td th:text="${dto.productName}">Product Name</td>
+                </tr>
+                <tr th:if="${dto.carrier != null}">
+                    <th>Carrier</th>
+                    <td th:text="${dto.carrier}">FedEx Express</td>
+                </tr>
+                <tr th:if="${dto.trackingNumber != null}">
+                    <th>Tracking Number</th>
+                    <td th:text="${dto.trackingNumber}">TRK-123456</td>
+                </tr>
+                <tr>
+                    <th>Current Status</th>
+                    <td style="color: #d97706; font-weight: 600;">OUT_FOR_DELIVERY</td>
+                </tr>
+                <tr th:if="${dto.outForDeliveryDate != null}">
+                    <th>Out-For-Delivery Date</th>
+                    <td th:text="${#temporals.format(dto.outForDeliveryDate, 'dd-MMM-yyyy HH:mm')}">18-Aug-2026 19:30</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 25px;">Please ensure authorized personnel are present to accept the delivery.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> Enterprise Procurement System. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

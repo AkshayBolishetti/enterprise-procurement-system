@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Enterprise Procurement System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+        .header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 30px; }
+        .welcome-badge { display: inline-block; background-color: #e8f5e9; color: #2e7d32; font-weight: 600; padding: 6px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; }
+        .table-details { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table-details th, .table-details td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eef2f5; }
+        .table-details th { background-color: #f8fafc; color: #475569; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .table-details td { color: #1e293b; font-size: 14px; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Enterprise Procurement System</h1>
+            <p>Welcome Onboard!</p>
+        </div>
+        <div class="content">
+            <div class="welcome-badge">Account Created</div>
+            <h2>Hello, <span th:text="${dto.employeeName}">Employee</span>!</h2>
+            <p>Welcome to the Enterprise Procurement System. Your employee account has been successfully registered and activated.</p>
+
+            <table class="table-details">
+                <tr>
+                    <th>Employee ID</th>
+                    <td th:text="${dto.employeeId}">EMP12345</td>
+                </tr>
+                <tr>
+                    <th>Email Address</th>
+                    <td th:text="${dto.recipientEmail}">user@example.com</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td th:text="${dto.department}">Engineering</td>
+                </tr>
+                <tr>
+                    <th>Designation</th>
+                    <td th:text="${dto.designation}">Software Engineer</td>
+                </tr>
+                <tr>
+                    <th>Role</th>
+                    <td th:text="${dto.role}">EMPLOYEE</td>
+                </tr>
+            </table>
+
+            <p style="margin-top: 25px;">You can now log in to raise procurement requests, track support request tickets, and manage department assets.</p>
+        </div>
+        <div class="footer">
+            &copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2026</span> <span th:text="${companyName}">Enterprise Procurement System</span>. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

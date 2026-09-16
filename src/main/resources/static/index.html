@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Procurement System - Payment Portal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            ProcurementPay Portal
+        </div>
+        <nav class="nav-links" id="navLinks" style="display: none;">
+            <button class="nav-btn active" id="btnTabRequests" onclick="switchTab('requests')">Procurement Requests</button>
+            <button class="nav-btn" id="btnTabPayments" onclick="switchTab('payments')">Payment History</button>
+            <button class="nav-btn" id="btnTabNewRequest" onclick="openNewRequestModal()">+ New Request</button>
+        </nav>
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <span id="userBadge" class="role-badge"></span>
+            <span id="userNameDisplay" style="font-weight: 500;"></span>
+            <button class="btn btn-secondary" onclick="logout()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Auth / Login View -->
+        <div id="loginSection" class="card" style="max-width: 420px; margin: 3rem auto;">
+            <div class="card-header" style="justify-content: center; border-bottom: none;">
+                <h2 class="card-title">Portal Login</h2>
+            </div>
+            <div id="loginAlert"></div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Email</label>
+                    <input type="email" id="loginEmail" value="admin@procurement.com" required style="width: 100%;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Password</label>
+                    <input type="password" id="loginPassword" value="adminpassword" required style="width: 100%;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 1rem;">
+                Default Credentials:<br>
+                Admin: <code>admin@procurement.com</code> / <code>adminpassword</code>
+            </p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="mainSection" style="display: none;">
+            
+            <!-- Requests View -->
+            <div id="tabRequests" class="card">
+                <div class="card-header">
+                    <h2 class="card-title" id="requestsTitle">Procurement Requests</h2>
+                    <div>
+                        <button class="btn btn-secondary" onclick="downloadCsv()" style="font-size: 0.85rem;">
+                            📥 Export Approved CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Status Filter</label>
+                        <select id="filterRequestStatus" onchange="loadRequests()">
+                            <option value="">All Statuses</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="APPROVED">APPROVED</option>
+                            <option value="REJECTED">REJECTED</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Code</th>
+                                <th>Product Name</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                                <th>Department</th>
+                                <th>Requested By</th>
+                                <th>Approval</th>
+                                <th>Payment Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <tr><td colspan="11" style="text-align: center; color: var(--text-muted);">Loading requests...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Payment History View -->
+            <div id="tabPayments" class="card" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">Payment History & Audit</h2>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Payment Status</label>
+                        <select id="filterPaymentStatus" onchange="loadPayments()">
+                            <option value="">All Payment Statuses</option>
+                            <option value="SUCCESS">SUCCESS</option>
+                            <option value="FAILED">FAILED</option>
+                            <option value="PENDING">PENDING</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Transaction Ref</th>
+                                <th>Req ID</th>
+                                <th>Product Name</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Paid By</th>
+                                <th>Payment Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Loading payment records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 style="font-size: 1.15rem; font-weight: 600;">Process Payment</h3>
+                <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+            </div>
+            
+            <div id="paymentModalAlert"></div>
+
+            <div class="payment-summary">
+                <div class="summary-row">
+                    <span style="color: var(--text-muted);">Request ID:</span>
+                    <span id="modalReqId" style="font-weight: 600;">-</span>
+                </div>
+                <div class="summary-row">
+                    <span style="color: var(--text-muted);">Product:</span>
+                    <span id="modalProductName" style="font-weight: 600;">-</span>
+                </div>
+                <div class="summary-row">
+                    <span style="color: var(--text-muted);">Product Code:</span>
+                    <span id="modalProductCode">-</span>
+                </div>
+                <div class="summary-row">
+                    <span style="color: var(--text-muted);">Department / Category:</span>
+                    <span id="modalDeptCat">-</span>
+                </div>
+                <div class="summary-row">
+                    <span style="color: var(--text-muted);">Requested By:</span>
+                    <span id="modalRequestedBy">-</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Approved Total Amount:</span>
+                    <span id="modalTotalAmount">$0.00</span>
+                </div>
+            </div>
+
+            <form id="paymentForm" onsubmit="handleProcessPayment(event)">
+                <input type="hidden" id="modalInputReqId">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Payment Method</label>
+                    <select id="modalPaymentMethod" required style="width: 100%;">
+                        <option value="CARD">Credit / Debit Card</option>
+                        <option value="UPI">UPI Transfer</option>
+                        <option value="NET_BANKING">Net Banking</option>
+                        <option value="CASH">Cash</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Amount ($)</label>
+                    <input type="number" id="modalAmount" step="0.01" required style="width: 100%; font-weight: 600;">
+                </div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="btnSubmitPayment">
+                        <span id="btnPaymentText">Confirm & Pay</span>
+                        <div id="btnPaymentSpinner" class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Request Modal -->
+    <div class="modal-overlay" id="newRequestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 style="font-size: 1.15rem; font-weight: 600;">Create Procurement Request</h3>
+                <button class="modal-close" onclick="closeNewRequestModal()">&times;</button>
+            </div>
+            <div id="newRequestAlert"></div>
+            <form id="newRequestForm" onsubmit="handleCreateRequest(event)">
+                <div style="margin-bottom: 0.8rem;">
+                    <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Product Code</label>
+                    <input type="text" id="reqProductCode" placeholder="e.g. LAPTOP-001" required style="width: 100%;">
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                    <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Product Name</label>
+                    <input type="text" id="reqProductName" placeholder="Dell XPS 15" required style="width: 100%;">
+                </div>
+                <div style="display: flex; gap: 0.8rem; margin-bottom: 0.8rem;">
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Quantity</label>
+                        <input type="number" id="reqQuantity" value="1" min="1" required style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Unit Price ($)</label>
+                        <input type="number" id="reqUnitPrice" step="0.01" value="1200.00" required style="width: 100%;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.8rem; margin-bottom: 1.25rem;">
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Department ID</label>
+                        <input type="number" id="reqDeptId" value="1" required style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.2rem;">Category ID</label>
+                        <input type="number" id="reqCatId" value="1" required style="width: 100%;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeNewRequestModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        Enterprise Procurement & Payment System &bull; Secured with Role-Based Access Control
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
