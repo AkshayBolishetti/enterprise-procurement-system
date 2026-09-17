@@ -14,6 +14,7 @@ public class DepartmentMapper {
         }
         return Department.builder()
                 .departmentName(dto.getDepartmentName())
+                .description(dto.getDescription())
                 .build();
     }
 
@@ -24,9 +25,7 @@ public class DepartmentMapper {
         return DepartmentResponseDTO.builder()
                 .id(entity.getId())
                 .departmentName(entity.getDepartmentName())
-                .adminId(entity.getAdmin() != null ? entity.getAdmin().getId() : null)
-                .adminName(entity.getAdmin() != null ? entity.getAdmin().getName() : null)
-                .adminEmail(entity.getAdmin() != null ? entity.getAdmin().getEmail() : null)
+                .description(entity.getDescription())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();
@@ -37,5 +36,6 @@ public class DepartmentMapper {
             return;
         }
         entity.setDepartmentName(dto.getDepartmentName());
+        entity.setDescription(dto.getDescription());
     }
 }

@@ -46,7 +46,6 @@ public class UserRequestDTO {
     @NotNull(message = "User status is mandatory")
     private UserStatus status;
 
-    @NotNull(message = "Department ID is mandatory")
     private Long departmentId;
 
     private String homeAddress;

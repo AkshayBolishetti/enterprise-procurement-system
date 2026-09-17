@@ -52,20 +52,19 @@ public class AuthService {
                     "User with employee ID " + requestDto.getEmployeeId() + " already exists");
         }
 
-        if (requestDto.getDepartmentId() == null) {
-            throw new IllegalArgumentException("Department is required.");
+        Department department = null;
+        if (requestDto.getDepartmentId() != null) {
+            department = departmentRepository.findById(requestDto.getDepartmentId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Department not found with ID: " + requestDto.getDepartmentId()));
         }
-
-        Department department = departmentRepository.findById(requestDto.getDepartmentId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Department not found with ID: " + requestDto.getDepartmentId()));
 
         Role role = requestDto.getRole() != null ? requestDto.getRole() : Role.EMPLOYEE;
 
         if (role == Role.ADMIN) {
-            if (userRepository.countByRoleAndDepartmentId(Role.ADMIN, department.getId()) > 0 || department.getAdmin() != null) {
+            if (userRepository.existsByRole(Role.ADMIN)) {
                 throw new DuplicateResourceException(
-                        "This department already has an admin. You cannot register another admin for this department.");
+                        "An admin account already exists. Only one admin is allowed in the system.");
             }
         }
 
@@ -83,10 +82,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        if (role == Role.ADMIN) {
-            department.setAdmin(savedUser);
-            departmentRepository.save(department);
-        }
+
 
         eventPublisher.publishEvent(new UserRegisteredEvent(savedUser));
 

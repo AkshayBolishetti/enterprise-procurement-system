@@ -41,9 +41,8 @@ public class Department extends BaseEntity {
     @Column(name = "department_name", nullable = false, unique = true, length = 100)
     private String departmentName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", unique = true)
-    private User admin;
+    @Column(name = "description")
+    private String description;
 
     @Builder.Default
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

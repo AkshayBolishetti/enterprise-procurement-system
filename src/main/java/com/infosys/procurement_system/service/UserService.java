@@ -55,8 +55,8 @@ public class UserService {
         }
 
         if (role == Role.ADMIN) {
-            if (userRepository.countByRoleAndDepartmentId(Role.ADMIN, department.getId()) > 0 || department.getAdmin() != null) {
-                throw new DuplicateResourceException("This department already has an admin. You cannot register another admin for this department.");
+            if (userRepository.existsByRole(Role.ADMIN)) {
+                throw new DuplicateResourceException("An admin account already exists. Only one admin is allowed in the system.");
             }
         }
 
@@ -67,10 +67,7 @@ public class UserService {
         }
 
         User saved = userRepository.save(user);
-        if (role == Role.ADMIN && department != null) {
-            department.setAdmin(saved);
-            departmentRepository.save(department);
-        }
+
         eventPublisher.publishEvent(new UserRegisteredEvent(saved));
         return userMapper.toDto(saved);
     }
@@ -82,7 +79,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserResponseDTO> getAllUsers(User currentUser) {
-        if (currentUser != null && currentUser.getRole() == Role.ADMIN && currentUser.getDepartment() != null) {
+        if (currentUser != null && currentUser.getRole() == Role.ADMIN) {
+            return userRepository.findAll().stream()
+                    .map(userMapper::toDto)
+                    .toList();
+        }
+        if (currentUser != null && currentUser.getDepartment() != null) {
             Long deptId = currentUser.getDepartment().getId();
             return userRepository.findByDepartmentId(deptId).stream()
                     .map(userMapper::toDto)
@@ -126,8 +128,8 @@ public class UserService {
         }
 
         if (role == Role.ADMIN) {
-            if (userRepository.countByRoleAndDepartmentIdAndIdNot(Role.ADMIN, department.getId(), id) > 0) {
-                throw new DuplicateResourceException("This department already has an admin. You cannot register another admin for this department.");
+            if (userRepository.existsByRoleAndIdNot(Role.ADMIN, id)) {
+                throw new DuplicateResourceException("An admin account already exists. Only one admin is allowed in the system.");
             }
         }
 
@@ -139,10 +141,7 @@ public class UserService {
         }
 
         User updatedUser = userRepository.save(user);
-        if (role == Role.ADMIN && department != null) {
-            department.setAdmin(updatedUser);
-            departmentRepository.save(department);
-        }
+
         return userMapper.toDto(updatedUser);
     }
 

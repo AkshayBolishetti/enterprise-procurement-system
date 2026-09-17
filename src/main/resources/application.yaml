@@ -38,5 +38,5 @@ spring:
 app:
   email:
     from: ${APP_EMAIL_FROM:akshaybolishetti2@gmail.com}
+    admin-email: ${APP_EMAIL_ADMIN:admin@procurement.com}
     company-name: ${APP_COMPANY_NAME:Enterprise Procurement System}
-    admin-email: ${APP_ADMIN_EMAIL:akshaybolishetti2@gmail.com}

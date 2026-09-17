@@ -23,7 +23,7 @@ The primary goal of this project is to automate the procurement workflow to save
 The application operates on a strict Role-Based Access model:
 
 1. **Request Phase**: An **Employee** browses available products and submits a purchase request (issue), providing necessary justifications and quantity details.
-2. **Approval Phase**: An **Admin** reviews the request via their dashboard. They assess the justification and budget, and then approve or reject the request.
+2. **Approval Phase**: The **Admin** reviews the request via their dashboard. They assess the justification and budget, and then approve or reject the request.
 3. **Order & Payment Phase**: Upon approval, the Admin initiates payment for the request. The system then automatically generates a Purchase Order (PO) and routes it to the designated Supplier.
 4. **Fulfillment Phase**: The **Supplier** logs in to view incoming orders. They prepare the items, update logistics statuses (e.g., "In Transit"), and eventually mark the order as "Delivered".
 5. **Feedback Phase**: The **Employee** confirms receipt and provides a rating/feedback on the delivery experience, completing the lifecycle.
@@ -68,7 +68,7 @@ graph TD
 
 ## Internal / Business Rules
 
-- Only **Admins** can approve requests and process payments.
+- Only the **Admin** can approve requests and process payments.
 - **Suppliers** can only view and update the status of Purchase Orders specifically assigned to them.
 - Employees can only see their own requests and leave feedback once an item is marked "Delivered".
 - Passwords are encrypted before storage and authentication tokens (JWT) must be passed with all protected requests.
@@ -193,24 +193,23 @@ The backend relies on several environment variables configured in `src/main/reso
 - `JWT_EXPIRATION`: Token expiration time in milliseconds (Default: `86400000` / 24 hours).
 - `SPRING_MAIL_USERNAME`: SMTP email address for sending notifications.
 - `SPRING_MAIL_PASSWORD`: SMTP app password.
-- `APP_ADMIN_EMAIL`: The email address for the initial bootstrapped admin.
-- `APP_ADMIN_PASSWORD`: The password for the initial bootstrapped admin.
 
-## Initial Admin Setup
 
-During application startup, the system creates an initial ADMIN account if no ADMIN user exists. The admin credentials must be provided through environment variables. 
+## Admin Setup
 
-To configure this locally, set the following environment variables (e.g. in your `.env` file):
-```env
-APP_ADMIN_EMAIL=admin@example.com
-APP_ADMIN_PASSWORD=<your-secure-password>
-```
-If these variables are missing, the application will fail to start and throw an error to prevent silent creation of unsecure accounts. The developer must configure their own values locally.
+The system allows exactly ONE **Admin** account. 
+
+To create the Admin account:
+1. Navigate to the `/admin/register` page in the running application.
+2. Fill out the registration form. (The Admin does not belong to any specific department, and has access to the entire Procurement Management System).
+3. Once registered, this account becomes the single administrator for the system.
+4. Any further attempts to register an Admin will be rejected.
+5. The application does not automatically create an admin during startup.
 
 ## Usage
 
 Once the application is running:
 1. **Initial Registration**: Navigate to the registration page. Register an initial User account. 
 2. **Employees**: Log in, browse the product catalog, and click "Raise Request" to initiate a purchase.
-3. **Admins**: Log in (using the initial setup credentials), navigate to the Dashboard to see pending requests, click to approve, and proceed to the Payment section to generate POs.
+3. **Admin**: Log in, navigate to the Dashboard to see all pending requests across all departments, click to approve, and proceed to the Payment section to generate POs.
 4. **Suppliers**: Register/Login as a supplier, view assigned Purchase Orders, and update the status from "Pending" to "Delivered".

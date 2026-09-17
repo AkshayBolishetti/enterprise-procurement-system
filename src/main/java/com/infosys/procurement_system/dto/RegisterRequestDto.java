@@ -41,6 +41,5 @@ public class RegisterRequestDto {
 
     private Role role;
 
-    @NotNull(message = "Department ID is mandatory")
     private Long departmentId;
 }

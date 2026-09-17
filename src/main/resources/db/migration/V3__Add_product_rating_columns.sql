@@ -1,3 +1,0 @@
-ALTER TABLE products
-ADD COLUMN average_rating DOUBLE PRECISION,
-ADD COLUMN total_ratings INTEGER DEFAULT 0;

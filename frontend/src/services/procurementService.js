@@ -140,15 +140,10 @@ export const procurementService = {
     return await request('/suppliers', { method: 'GET' });
   },
 
-  async assignDepartmentAdmin(deptId, userId) {
-    return await request(`/departments/${deptId}/admin?userId=${userId}`, {
-      method: 'PUT',
-    });
-  },
-
-  async replaceDepartmentAdmin(deptId, userId) {
-    return await request(`/departments/${deptId}/admin/replace?userId=${userId}`, {
-      method: 'PUT',
+  async createDepartment(data) {
+    return await request('/departments', {
+      method: 'POST',
+      body: JSON.stringify(data)
     });
   },
   // ----------------------------------------------------

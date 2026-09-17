@@ -66,16 +66,7 @@ export const Departments = () => {
         <span className="font-medium text-slate-900 dark:text-white">{row.departmentName}</span>
       </div>
     )},
-    { header: 'Description', accessor: 'description' },
-    { header: 'Admin', accessor: 'admin', cell: (row) => (
-      row.adminName ? (
-        <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400">
-          {row.adminName}
-        </span>
-      ) : (
-        <span className="text-slate-400 italic text-xs">Unassigned</span>
-      )
-    )}
+    { header: 'Description', accessor: 'description' }
   ];
 
   return (

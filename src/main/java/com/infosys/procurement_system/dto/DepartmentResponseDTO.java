@@ -17,9 +17,7 @@ public class DepartmentResponseDTO {
 
     private Long id;
     private String departmentName;
-    private Long adminId;
-    private String adminName;
-    private String adminEmail;
+    private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

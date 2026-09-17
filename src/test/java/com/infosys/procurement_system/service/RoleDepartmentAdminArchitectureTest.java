@@ -45,6 +45,10 @@ class RoleDepartmentAdminArchitectureTest {
 
     @BeforeEach
     void setUp() {
+        // Clean up any ADMIN users left over from other tests
+        List<User> admins = userRepository.findByRole(Role.ADMIN);
+        userRepository.deleteAll(admins);
+
         engDept = departmentRepository.findByDepartmentName("Architecture Eng")
                 .orElseGet(() -> {
                     DepartmentRequestDTO engDto = new DepartmentRequestDTO();
@@ -63,22 +67,8 @@ class RoleDepartmentAdminArchitectureTest {
     }
 
     @Test
-    @DisplayName("ADMIN requires department - Null department registration fails")
-    void testAdminRequiresDepartment() {
-        RegisterRequestDto dto = new RegisterRequestDto();
-        dto.setEmployeeId("ADM-NO-DEPT");
-        dto.setName("No Dept Admin");
-        dto.setEmail("nodept@test.com");
-        dto.setPassword("password123");
-        dto.setRole(Role.ADMIN);
-        dto.setDepartmentId(null);
-
-        assertThrows(IllegalArgumentException.class, () -> authService.register(dto));
-    }
-
-    @Test
-    @DisplayName("No Global Admin allowed in system - department == null is rejected")
-    void testNoGlobalAdminAllowed() {
+    @DisplayName("Admin does not require department - Registration succeeds")
+    void testAdminDoesNotRequireDepartment() {
         RegisterRequestDto dto = new RegisterRequestDto();
         dto.setEmployeeId("GLOBAL-ADMIN");
         dto.setName("Global Admin");
@@ -87,63 +77,50 @@ class RoleDepartmentAdminArchitectureTest {
         dto.setRole(Role.ADMIN);
         dto.setDepartmentId(null);
 
-        assertThrows(IllegalArgumentException.class, () -> authService.register(dto));
-    }
-
-    @Test
-    @DisplayName("Admin Registration for department with no admin succeeds")
-    void testAdminRegistrationForNewDepartmentSucceeds() {
-        RegisterRequestDto dto = new RegisterRequestDto();
-        dto.setEmployeeId("ENG-ADM-01");
-        dto.setName("Eng Admin One");
-        dto.setEmail("engadmin1@test.com");
-        dto.setPassword("password123");
-        dto.setRole(Role.ADMIN);
-        dto.setDepartmentId(engDept.getId());
-
         var resp = authService.register(dto);
         assertNotNull(resp);
         assertEquals(Role.ADMIN, resp.getRole());
-        assertEquals("Architecture Eng", resp.getDepartmentName());
+        assertNull(resp.getDepartmentName());
     }
 
     @Test
-    @DisplayName("Second Admin registration for same department fails with 409 DuplicateResourceException")
+    @DisplayName("Second Admin registration is rejected across entire system")
     void testSecondAdminRegistrationRejected() {
         RegisterRequestDto dto1 = new RegisterRequestDto();
-        dto1.setEmployeeId("ENG-ADM-10");
+        dto1.setEmployeeId("FIRST-ADMIN");
         dto1.setName("First Admin");
-        dto1.setEmail("admin10@eng.com");
+        dto1.setEmail("admin1@test.com");
         dto1.setPassword("password123");
         dto1.setRole(Role.ADMIN);
-        dto1.setDepartmentId(engDept.getId());
+        dto1.setDepartmentId(null);
         authService.register(dto1);
 
         RegisterRequestDto dto2 = new RegisterRequestDto();
-        dto2.setEmployeeId("ENG-ADM-11");
+        dto2.setEmployeeId("SECOND-ADMIN");
         dto2.setName("Second Admin Attempt");
-        dto2.setEmail("admin11@eng.com");
+        dto2.setEmail("admin2@test.com");
         dto2.setPassword("password123");
         dto2.setRole(Role.ADMIN);
-        dto2.setDepartmentId(engDept.getId());
+        dto2.setDepartmentId(null);
 
         DuplicateResourceException ex = assertThrows(DuplicateResourceException.class, () -> authService.register(dto2));
-        assertTrue(ex.getMessage().contains("This department already has an admin"));
+        assertTrue(ex.getMessage().contains("An admin account already exists"));
     }
 
     @Test
-    @DisplayName("Department Admin Isolation - Admin can only view users in their own department")
-    void testDepartmentAdminIsolation() {
-        // Register Eng Admin & Employee
-        RegisterRequestDto engAdminDto = new RegisterRequestDto();
-        engAdminDto.setEmployeeId("ENG-ADM-99");
-        engAdminDto.setName("Eng Admin");
-        engAdminDto.setEmail("admin99@eng.com");
-        engAdminDto.setPassword("password123");
-        engAdminDto.setRole(Role.ADMIN);
-        engAdminDto.setDepartmentId(engDept.getId());
-        authService.register(engAdminDto);
+    @DisplayName("Global Admin can view all users in the system")
+    void testGlobalAdminCanViewAllUsers() {
+        // Register Global Admin
+        RegisterRequestDto adminDto = new RegisterRequestDto();
+        adminDto.setEmployeeId("GLOBAL-ADM-99");
+        adminDto.setName("Global Admin");
+        adminDto.setEmail("admin99@global.com");
+        adminDto.setPassword("password123");
+        adminDto.setRole(Role.ADMIN);
+        adminDto.setDepartmentId(null);
+        authService.register(adminDto);
 
+        // Register Eng Employee
         RegisterRequestDto engEmpDto = new RegisterRequestDto();
         engEmpDto.setEmployeeId("ENG-EMP-99");
         engEmpDto.setName("Eng Emp");
@@ -153,21 +130,24 @@ class RoleDepartmentAdminArchitectureTest {
         engEmpDto.setDepartmentId(engDept.getId());
         authService.register(engEmpDto);
 
-        // Register Fin Admin & Employee
-        RegisterRequestDto finAdminDto = new RegisterRequestDto();
-        finAdminDto.setEmployeeId("FIN-ADM-99");
-        finAdminDto.setName("Fin Admin");
-        finAdminDto.setEmail("admin99@fin.com");
-        finAdminDto.setPassword("password123");
-        finAdminDto.setRole(Role.ADMIN);
-        finAdminDto.setDepartmentId(finDept.getId());
-        authService.register(finAdminDto);
+        // Register Fin Employee
+        RegisterRequestDto finEmpDto = new RegisterRequestDto();
+        finEmpDto.setEmployeeId("FIN-EMP-99");
+        finEmpDto.setName("Fin Emp");
+        finEmpDto.setEmail("emp99@fin.com");
+        finEmpDto.setPassword("password123");
+        finEmpDto.setRole(Role.EMPLOYEE);
+        finEmpDto.setDepartmentId(finDept.getId());
+        authService.register(finEmpDto);
 
-        User engAdminUser = userRepository.findByEmail("admin99@eng.com").orElseThrow();
+        User globalAdminUser = userRepository.findByEmail("admin99@global.com").orElseThrow();
 
-        // Get users as Eng Admin
-        List<UserResponseDTO> engUsers = userService.getAllUsers(engAdminUser);
-        assertFalse(engUsers.isEmpty());
-        assertTrue(engUsers.stream().allMatch(u -> "Architecture Eng".equals(u.getDepartmentName())));
+        // Get users as Global Admin
+        List<UserResponseDTO> allUsers = userService.getAllUsers(globalAdminUser);
+        
+        // Admin should see themselves + 2 employees at least
+        assertTrue(allUsers.size() >= 3);
+        assertTrue(allUsers.stream().anyMatch(u -> "eng99@eng.com".equals(u.getEmail()) || "emp99@eng.com".equals(u.getEmail())));
+        assertTrue(allUsers.stream().anyMatch(u -> "emp99@fin.com".equals(u.getEmail())));
     }
 }

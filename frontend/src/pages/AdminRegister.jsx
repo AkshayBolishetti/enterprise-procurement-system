@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { AuthLayout } from '../components/AuthLayout';
 import { authService } from '../services/authService';
 
 export const AdminRegister = () => {
   const navigate = useNavigate();
-
-  const [departments, setDepartments] = useState([]);
-  const [loadingDepts, setLoadingDepts] = useState(true);
-  const [deptError, setDeptError] = useState('');
 
   const [formData, setFormData] = useState({
     employeeId: '',
@@ -19,7 +15,6 @@ export const AdminRegister = () => {
     confirmPassword: '',
     phoneNumber: '',
     designation: '',
-    departmentId: '',
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -29,46 +24,6 @@ export const AdminRegister = () => {
   const [apiError, setApiError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  const fetchDepts = async () => {
-    setLoadingDepts(true);
-    setDeptError('');
-    try {
-      const res = await authService.getDepartments();
-      if (res?.data) {
-        setDepartments(res.data);
-        if (res.data.length === 0) {
-          setDeptError('No departments are currently available.');
-        }
-      } else {
-        setDepartments([]);
-        setDeptError('No departments are currently available.');
-      }
-    } catch (err) {
-      setDepartments([]);
-      setDeptError('Unable to load departments. Please try again.');
-    } finally {
-      setLoadingDepts(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDepts();
-  }, []);
-
-  const handleDepartmentChange = (e) => {
-    const selectedId = e.target.value;
-    setFormData({ ...formData, departmentId: selectedId });
-    setApiError('');
-    if (errors.departmentId) setErrors({ ...errors, departmentId: '' });
-
-    if (selectedId) {
-      const selectedDept = departments.find((d) => String(d.id) === String(selectedId));
-      if (selectedDept && selectedDept.adminId != null) {
-        setApiError('This department already has an admin. You cannot register another admin for this department.');
-      }
-    }
-  };
 
   const validate = () => {
     const newErrors = {};
@@ -85,15 +40,6 @@ export const AdminRegister = () => {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.departmentId) {
-      newErrors.departmentId = 'Department is required.';
-    } else {
-      const selectedDept = departments.find((d) => String(d.id) === String(formData.departmentId));
-      if (selectedDept && selectedDept.adminId != null) {
-        newErrors.departmentId = 'This department already has an admin. You cannot register another admin for this department.';
-      }
     }
 
     if (!formData.password) {
@@ -124,14 +70,14 @@ export const AdminRegister = () => {
       await authService.register({
         ...formData,
         role: 'ADMIN',
-        departmentId: Number(formData.departmentId),
+        departmentId: null,
       });
       setSuccessMsg('Admin registration successful! Redirecting to admin login...');
       setTimeout(() => {
         navigate('/admin/login');
       }, 1500);
     } catch (err) {
-      setApiError(err.message || 'This department already has an admin. You cannot register another admin for this department.');
+      setApiError(err.message || 'Registration failed.');
     } finally {
       setSubmitting(false);
     }
@@ -140,7 +86,7 @@ export const AdminRegister = () => {
   return (
     <AuthLayout
       title="Admin Registration"
-      subtitle="Register a new Department Administrator"
+      subtitle="Register as a System Administrator"
       isAdmin={true}
     >
       {apiError && (
@@ -158,46 +104,6 @@ export const AdminRegister = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
-        <div>
-          <label className="form-label">Select Department *</label>
-          <div className="relative">
-            <select
-              value={formData.departmentId}
-              onChange={handleDepartmentChange}
-              disabled={submitting || loadingDepts || departments.length === 0}
-              className={`form-input ${errors.departmentId ? 'border-red-400' : ''}`}
-            >
-              {loadingDepts ? (
-                <option value="">Loading departments...</option>
-              ) : departments.length === 0 ? (
-                <option value="">No departments available</option>
-              ) : (
-                <>
-                  <option value="">-- Select Department * --</option>
-                  {departments.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.departmentName} {d.adminId != null ? '(Already has an admin)' : '(Available)'}
-                    </option>
-                  ))}
-                </>
-              )}
-            </select>
-          </div>
-          {deptError && (
-            <div className="mt-1 flex items-center justify-between gap-1 text-[11px] text-red-600">
-              <span>{deptError}</span>
-              <button
-                type="button"
-                onClick={fetchDepts}
-                className="font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-0.5 shrink-0"
-              >
-                <RefreshCw className="w-3 h-3" /> Retry
-              </button>
-            </div>
-          )}
-          {errors.departmentId && <p className="mt-1 text-[11px] text-red-600">{errors.departmentId}</p>}
-        </div>
-
         <div>
           <label className="form-label">Employee ID *</label>
           <input
@@ -217,7 +123,7 @@ export const AdminRegister = () => {
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Department Admin Name"
+            placeholder="System Admin Name"
             disabled={submitting}
             className={`form-input ${errors.name ? 'border-red-400' : ''}`}
           />
@@ -285,7 +191,7 @@ export const AdminRegister = () => {
 
         <button
           type="submit"
-          disabled={submitting || loadingDepts || departments.length === 0}
+          disabled={submitting}
           className="w-full flex justify-center items-center py-2.5 px-4 rounded-md text-sm font-medium text-slate-950 bg-amber-400 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 active:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed transition duration-150 ease-in-out shadow-xs font-semibold !mt-5"
         >
           {submitting ? (
@@ -294,7 +200,7 @@ export const AdminRegister = () => {
               Registering Admin...
             </>
           ) : (
-            'Register Department Admin'
+            'Register Admin'
           )}
         </button>
       </form>

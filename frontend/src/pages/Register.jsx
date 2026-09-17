@@ -86,10 +86,6 @@ export const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    if (!formData.departmentId) {
-      newErrors.departmentId = 'Department is required';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -106,7 +102,7 @@ export const Register = () => {
       await authService.register({
         ...formData,
         role: 'EMPLOYEE',
-        departmentId: Number(formData.departmentId),
+        departmentId: formData.departmentId ? Number(formData.departmentId) : null,
       });
 
       setSuccessMsg('Account created successfully! Redirecting to login...');
@@ -155,7 +151,7 @@ export const Register = () => {
           </div>
 
           <div>
-            <label className="form-label">Department *</label>
+            <label className="form-label">Department [ Optional ]</label>
             <select
               value={formData.departmentId}
               onChange={(e) => {

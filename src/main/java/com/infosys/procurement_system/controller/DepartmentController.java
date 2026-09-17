@@ -49,30 +49,7 @@ public class DepartmentController {
                 departmentService.updateDepartment(id, requestDTO)));
     }
 
-    @PutMapping("/{id}/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> assignAdmin(
-            @PathVariable Long id,
-            @RequestParam Long userId) {
-        return ResponseEntity.ok(ApiResponse.success("Department admin assigned successfully",
-                departmentService.assignAdmin(id, userId)));
-    }
 
-    @PutMapping("/{id}/admin/replace")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> replaceAdmin(
-            @PathVariable Long id,
-            @RequestParam Long userId) {
-        return ResponseEntity.ok(ApiResponse.success("Department admin replaced successfully",
-                departmentService.replaceAdmin(id, userId)));
-    }
-
-    @DeleteMapping("/{id}/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<DepartmentResponseDTO>> removeAdmin(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success("Department admin removed successfully",
-                departmentService.removeAdmin(id)));
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
