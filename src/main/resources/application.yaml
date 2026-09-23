@@ -4,12 +4,12 @@ spring:
 
   datasource:
     url: jdbc:mysql://localhost:3306/Procurement_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: ${USER_NAME_DB:root}
-    password: ${PASSWORD_DB:Akshay@2007}
+    username: ${USER_NAME_DB:}
+    password: ${PASSWORD_DB:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jwt:
-    secret: ${JWT_SECRET:d8WObco56SqOAhuZLwuFZ1n/7xO/EtDL0Z6d7+T6d3Y=}
+    secret: ${JWT_SECRET:}
     expiration: ${JWT_EXPIRATION:86400000}
 
   jpa:
@@ -25,8 +25,8 @@ spring:
   mail:
     host: ${SPRING_MAIL_HOST:smtp.gmail.com}
     port: ${SPRING_MAIL_PORT:587}
-    username: ${SPRING_MAIL_USERNAME:akshaybolishetti2@gmail.com}
-    password: ${SPRING_MAIL_PASSWORD:hfle fvaa pxii mogs}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -37,6 +37,6 @@ spring:
 
 app:
   email:
-    from: ${APP_EMAIL_FROM:akshaybolishetti2@gmail.com}
-    admin-email: ${APP_EMAIL_ADMIN:admin@procurement.com}
+    from: ${APP_EMAIL_FROM:}
+    admin-email: ${APP_EMAIL_ADMIN:}
     company-name: ${APP_COMPANY_NAME:Enterprise Procurement System}
