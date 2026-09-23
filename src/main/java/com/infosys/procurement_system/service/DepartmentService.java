@@ -3,14 +3,11 @@ package com.infosys.procurement_system.service;
 import com.infosys.procurement_system.dto.DepartmentRequestDTO;
 import com.infosys.procurement_system.dto.DepartmentResponseDTO;
 import com.infosys.procurement_system.entity.Department;
-import com.infosys.procurement_system.entity.User;
-import com.infosys.procurement_system.enums.Role;
 import com.infosys.procurement_system.exception.DuplicateResourceException;
 import com.infosys.procurement_system.exception.IllegalOperationException;
 import com.infosys.procurement_system.exception.ResourceNotFoundException;
 import com.infosys.procurement_system.mapper.DepartmentMapper;
 import com.infosys.procurement_system.repository.DepartmentRepository;
-import com.infosys.procurement_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +21,6 @@ import java.util.List;
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final UserRepository userRepository;
     private final DepartmentMapper departmentMapper;
 
     @Transactional

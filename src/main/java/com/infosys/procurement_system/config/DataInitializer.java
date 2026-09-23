@@ -1,15 +1,9 @@
 package com.infosys.procurement_system.config;
 
-import com.infosys.procurement_system.entity.User;
-import com.infosys.procurement_system.enums.Role;
-import com.infosys.procurement_system.enums.UserStatus;
-import com.infosys.procurement_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,14 +12,11 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final Environment env;
 
     @Override
     public void run(String... args) {
         try {
-            jdbcTemplate.execute("ALTER TABLE departments MODIFY COLUMN manager_name VARCHAR(100) NULL");
+            jdbcTemplate.execute("ALTER TABLE departments DROP COLUMN manager_name");
         } catch (Exception e) {
             log.debug("Schema adjustment for manager_name nullability: {}", e.getMessage());
         }
